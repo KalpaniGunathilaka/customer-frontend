@@ -1,0 +1,52 @@
+<header class="bar">
+  <h1>Customers</h1>
+  <a routerLink="/customers/new" class="btn">+ New customer</a>
+</header>
+
+@if (customersResource.isLoading()) {
+  <p class="muted">Loading...</p>
+}
+@else if (customersResource.error()) {
+  <p class="err">Could not load customers.</p>
+}
+@else if (filteredCustomers().length === 0) {
+  <p class="muted">No customers found.</p>
+}
+@else {
+  <div class="search-box">
+    <input
+      type="text"
+      placeholder="Search customers..."
+      [value]="searchTerm()"
+      (input)="searchTerm.set($any($event.target).value)">
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Date of birth</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (c of filteredCustomers(); track c.customerId) {
+        <tr>
+          <td>{{ c.customerCode }}</td>
+          <td>{{ c.customerName }}</td>
+          <td>{{ c.customerType }}</td>
+          <td>{{ c.dateOfBirth | date:'mediumDate' }}</td>
+          <td>{{ c.isActive ? 'Active' : 'Inactive' }}</td>
+          <td class="actions">
+            <a [routerLink]="['/customers', c.customerId, 'edit']">Edit</a>
+            <button type="button" (click)="remove(c)">Delete</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
